@@ -1,0 +1,65 @@
+#!/usr/bin/env php
+<?php
+
+declare(strict_types=1);
+
+/*
+ * The checks of laravel-security-check on an app that does not have the package: it boots the app read-only
+ * (bootstrap/app.php, the console kernel's bootstrap), loads this package's classes beside it, and changes nothing.
+ * Usage: bin/security-check <app folder> [--only=a,b] [--fail-on=medium] [--json]. Exit 1: a finding at or above
+ * --fail-on; 0: none; 2: a wrong argument or an app that does not boot.
+ */
+
+$args = array_slice($argv, 1);
+$path = null;
+$options = ['only' => '', 'fail-on' => 'medium', 'json' => false];
+foreach ($args as $arg) {
+    if (preg_match('/^--(only|fail-on)=(.*)$/', $arg, $m)) {
+        $options[$m[1]] = $m[2];
+    } elseif ($arg === '--json') {
+        $options['json'] = true;
+    } elseif ($arg === '-h' || $arg === '--help') {
+        fwrite(STDOUT, "Usage: security-check <app folder> [--only=config,code,livewire,alpine,dependencies] [--fail-on=high|medium|low|info] [--json]\n");
+        exit(0);
+    } else {
+        $path = $arg;
+    }
+}
+$app = realpath($path ?? getcwd());
+if ($app === false || ! is_file("$app/artisan") || ! is_file("$app/vendor/autoload.php")) {
+    fwrite(STDERR, "security-check: not a Laravel app with installed dependencies: ".($path ?? getcwd())."\n");
+    exit(2);
+}
+
+require "$app/vendor/autoload.php";
+$prefix = 'Olgun\\SecurityCheck\\';
+spl_autoload_register(static function (string $class) use ($prefix): void {
+    if (str_starts_with($class, $prefix)) {
+        $file = __DIR__.'/../src/'.str_replace('\\', '/', substr($class, strlen($prefix))).'.php';
+        if (is_file($file)) {
+            require $file;
+        }
+    }
+});
+
+chdir($app);
+$laravel = require "$app/bootstrap/app.php";
+$laravel->make(Illuminate\Contracts\Console\Kernel::class)->bootstrap();
+$laravel['config']->set('security-check', array_replace(require __DIR__.'/../config/security-check.php', (array) $laravel['config']->get('security-check', [])));
+
+$floor = Olgun\SecurityCheck\Severity::tryFrom((string) $options['fail-on']);
+if ($floor === null) {
+    fwrite(STDERR, "security-check: --fail-on must be high, medium, low or info\n");
+    exit(2);
+}
+$context = new Olgun\SecurityCheck\Context($laravel);
+$registry = new Olgun\SecurityCheck\CheckRegistry();
+$checks = $registry->all($context);
+$only = array_filter(array_map('trim', explode(',', (string) $options['only'])));
+if ($only !== []) {
+    $checks = array_values(array_filter($checks, static fn ($c): bool => in_array($c->group(), $only, true) || in_array($c->name(), $only, true)));
+}
+[$findings, $skipped] = $registry->run($checks, $context);
+$report = new Olgun\SecurityCheck\Report($findings, $skipped, count($checks), $context->files->count(), $context->files->largeCount());
+fwrite(STDOUT, ($options['json'] ? $report->json() : $report->text())."\n");
+exit($report->failsAt($floor) ? 1 : 0);
