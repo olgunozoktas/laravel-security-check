@@ -21,7 +21,7 @@ final class RawSql extends BaseCheck
         $out = [];
         foreach ($context->files->grep($context->files->list(['app', 'routes', 'database'], ['.php']), self::PATTERN) as [$file, $line, $code]) {
             // High when the same line reads the request, or a Livewire property (the browser writes those); else an
-            // interpolated fragment that the code builds itself (measured 2026-11-06: 19 of 19 such lines in themevault).
+            // interpolated fragment that the code builds itself (measured 2026-11-06: 19 of 19 such lines in one real app).
             $live = preg_match('/\$request\b|request\(|->input\(|->query\(|\$_(?:GET|POST|REQUEST)|\{\$this->|\.\s*\$this->/', $code) === 1;
             $out[] = $this->finding($live ? Severity::High : Severity::Low,
                 $live ? 'Raw SQL is built from request data (or a Livewire property that the browser writes): an SQL injection.'
