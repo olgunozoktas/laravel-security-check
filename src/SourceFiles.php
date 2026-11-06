@@ -27,7 +27,7 @@ final class SourceFiles
     /** @var array<string, list<string>> */
     private array $lists = [];
 
-    /** A file over this size is data, not code (themevault's database/data/apps/apps.json is 20 MB): it is skipped and counted. */
+    /** A file over this size is data, not code (a 20 MB JSON seed file in one real app): it is skipped and counted. */
     public const MAX_BYTES = 1_000_000;
 
     /** @var array<string, true> */
