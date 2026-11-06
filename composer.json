@@ -1,17 +1,54 @@
 {
     "name": "olgunozoktas/laravel-security-check",
     "description": "Security checks for Laravel and Livewire apps without AI: `php artisan security:check` reads the config, the routes and the source, one file for each check, and a finding at or above --fail-on exits non-zero for CI and pull requests.",
-    "keywords": ["laravel", "livewire", "security", "static-analysis", "audit"],
+    "keywords": [
+        "laravel",
+        "livewire",
+        "security",
+        "static-analysis",
+        "audit"
+    ],
     "type": "library",
     "license": "MIT",
-    "authors": [{ "name": "Olgun Özoktaş", "email": "olgunozoktas@hotmail.com" }],
+    "authors": [
+        {
+            "name": "Olgun Özoktaş",
+            "email": "olgunozoktas@hotmail.com"
+        }
+    ],
     "require": {
         "php": "^8.3",
         "laravel/framework": "^12.0|^13.0"
     },
-    "autoload": { "psr-4": { "Olgun\\SecurityCheck\\": "src/" } },
-    "bin": ["bin/security-check"],
-    "extra": { "laravel": { "providers": ["Olgun\\SecurityCheck\\SecurityCheckServiceProvider"] } },
+    "require-dev": {
+        "pestphp/pest": "^4.0",
+        "orchestra/testbench": "^10.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Olgun\\SecurityCheck\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Olgun\\SecurityCheck\\Tests\\": "tests/"
+        }
+    },
+    "bin": [
+        "bin/security-check"
+    ],
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Olgun\\SecurityCheck\\SecurityCheckServiceProvider"
+            ]
+        }
+    },
+    "config": {
+        "allow-plugins": {
+            "pestphp/pest-plugin": true
+        }
+    },
     "minimum-stability": "dev",
     "prefer-stable": true
 }
