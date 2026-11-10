@@ -9,12 +9,11 @@ Status legend: `- [ ]` = to do, `- [x]` = implemented
 
 ## Context
 
-- Seen in DataVisitors on 2026-11-06, the first run of v0.1.1 on that app: four of its findings were inside comments.
+- A first run of v0.1.1 on a Laravel application: four of its findings were inside comments.
 - The shapes: a PHP comment that quotes `->update($request->all())` raises `mass-assignment`; a PHP comment that quotes
   `env('SOME_KEY')` raises `env-outside-config`; a Blade comment (`{{-- … --}}`) that quotes a raw-output tag raises
   `unescaped-blade`.
-- Seen in the `me` site on 2026-11-10 (package docs V5): a PHP string that quotes `$guarded = []` as docs text raises
-  `mass-assignment` (low). The same rule applies: text that only names the risk is not code.
+- A PHP string that quotes `$guarded = []` as docs text raises `mass-assignment` (low). The same rule applies: text that only names the risk is not code.
 - The app reworded its comments to get past them. A check that cannot be silenced except by rewording a comment teaches
   people to stop writing comments that name the risk, which is the opposite of the goal.
 

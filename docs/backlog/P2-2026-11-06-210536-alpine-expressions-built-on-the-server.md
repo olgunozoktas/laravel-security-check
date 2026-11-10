@@ -9,7 +9,7 @@ Status legend: `- [ ]` = to do, `- [x]` = implemented
 
 ## Context
 
-- Seen in DataVisitors on 2026-11-07, while its findings of v0.1.1 were worked through.
+- Found while the findings of v0.1.1 on a Laravel application were worked through.
 - **No option for code on purpose.** `blade-in-alpine-expression` flags `x-show="{{ $when }}"`, where the server builds a
   piece of Alpine CODE from constants (a condition, a state object, a property name). `Illuminate\Support\Js::from()`
   would turn that code into a string and break it. `safe_raw_output` covers `{!! !!}` only, so such a line cannot be
