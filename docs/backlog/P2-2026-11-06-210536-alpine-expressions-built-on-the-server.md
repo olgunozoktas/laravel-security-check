@@ -2,8 +2,8 @@
 
 Created: 2026-11-07 (UTC)
 Priority: **P2**
-GitHub Issue: _not filed yet_
-Tags: false-finding, option, checks
+GitHub Issue: [#8](https://github.com/olgunozoktas/laravel-security-check/issues/8)
+Tags: false-finding, option, checks, back-end
 Size: M
 Status legend: `- [ ]` = to do, `- [x]` = implemented
 
