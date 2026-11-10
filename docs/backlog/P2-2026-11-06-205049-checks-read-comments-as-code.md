@@ -2,17 +2,18 @@
 
 Created: 2026-11-06 (UTC)
 Priority: **P2**
-GitHub Issue: _not filed yet_
-Tags: false-finding, checks
+GitHub Issue: [#7](https://github.com/olgunozoktas/laravel-security-check/issues/7)
+Tags: false-finding, checks, back-end
 Size: S
 Status legend: `- [ ]` = to do, `- [x]` = implemented
 
 ## Context
 
-- Seen in DataVisitors on 2026-11-06, the first run of v0.1.1 on that app: four of its findings were inside comments.
+- A first run of v0.1.1 on a Laravel application: four of its findings were inside comments.
 - The shapes: a PHP comment that quotes `->update($request->all())` raises `mass-assignment`; a PHP comment that quotes
   `env('SOME_KEY')` raises `env-outside-config`; a Blade comment (`{{-- … --}}`) that quotes a raw-output tag raises
   `unescaped-blade`.
+- A PHP string that quotes `$guarded = []` as docs text raises `mass-assignment` (low). The same rule applies: text that only names the risk is not code.
 - The app reworded its comments to get past them. A check that cannot be silenced except by rewording a comment teaches
   people to stop writing comments that name the risk, which is the opposite of the goal.
 
@@ -21,6 +22,8 @@ Status legend: `- [ ]` = to do, `- [x]` = implemented
 - [ ] Strip PHP comments (`//`, `#`, `/* … */`, PHPDoc) before the code checks read a file, with the PHP tokenizer
       (`T_COMMENT`, `T_DOC_COMMENT`), and keep the line numbers.
 - [ ] Strip Blade comments (`{{-- … --}}`) before the Blade checks read a view, and keep the line numbers.
+- [ ] Decide for PHP string literals: a `mass-assignment` shape inside a quoted string (docs text) is not code. Skip
+      `T_CONSTANT_ENCAPSED_STRING` for the code checks where the shape needs real PHP (keep `raw-sql`, which reads strings).
 - [ ] Tests: each shape above inside a comment is silent; the same code outside a comment is still found.
 
 ## Acceptance
