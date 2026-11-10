@@ -13,6 +13,8 @@ Status legend: `- [ ]` = to do, `- [x]` = implemented
 - The shapes: a PHP comment that quotes `->update($request->all())` raises `mass-assignment`; a PHP comment that quotes
   `env('SOME_KEY')` raises `env-outside-config`; a Blade comment (`{{-- … --}}`) that quotes a raw-output tag raises
   `unescaped-blade`.
+- Seen in the `me` site on 2026-11-10 (package docs V5): a PHP string that quotes `$guarded = []` as docs text raises
+  `mass-assignment` (low). The same rule applies: text that only names the risk is not code.
 - The app reworded its comments to get past them. A check that cannot be silenced except by rewording a comment teaches
   people to stop writing comments that name the risk, which is the opposite of the goal.
 
@@ -21,6 +23,8 @@ Status legend: `- [ ]` = to do, `- [x]` = implemented
 - [ ] Strip PHP comments (`//`, `#`, `/* … */`, PHPDoc) before the code checks read a file, with the PHP tokenizer
       (`T_COMMENT`, `T_DOC_COMMENT`), and keep the line numbers.
 - [ ] Strip Blade comments (`{{-- … --}}`) before the Blade checks read a view, and keep the line numbers.
+- [ ] Decide for PHP string literals: a `mass-assignment` shape inside a quoted string (docs text) is not code. Skip
+      `T_CONSTANT_ENCAPSED_STRING` for the code checks where the shape needs real PHP (keep `raw-sql`, which reads strings).
 - [ ] Tests: each shape above inside a comment is silent; the same code outside a comment is still found.
 
 ## Acceptance
